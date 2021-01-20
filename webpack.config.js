@@ -2,12 +2,13 @@
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const path = require('path')
 
 
 module.exports = {
   mode: 'development',
-  entry: "./src/ts/app.ts",
+  entry: "./src/ts/app.js",
   output: {
     filename: "[name].[hash].js",
     path: path.resolve(__dirname, 'dist')
@@ -21,32 +22,62 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
+      {
         test: /\.js$/,
         exclude: '/mode_modules/',
-        loader: 'babel-loader'
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env'
+              ]
+            },
+          }
+        ] 
       },
       {
         test: /\.ts$/,
         exclude: '/mode_modules/',
-        loader: {
-          loader: 'babel-loader',
-          presets: [
-            '@babel/preset-env',
-            '@babel/preset-typescript'
-          ]
-        }
+        loader: 'ts-loader',
+        options: { appendTsSuffixTo: [/\.vue$/] },
       },
       {
         test: /\.css$/,
         use: [
+          'vue-style-loader',
+          /*
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
               hmr: true,
               reloadAll: true,
             },
-          },
+          },*/
           'css-loader'
+        ]
+      },
+        {
+        test: /\.s[ac]ss$/,
+        use: [
+          'vue-style-loader',
+          /*{
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: true,
+              reloadAll: true,
+            },
+          },*/
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {  
+              additionalData: path.resolve(__dirname,'./src/styles/variables.scss')
+            }
+          },
         ]
       },
       {
@@ -62,7 +93,7 @@ module.exports = {
     open: true
   },
   plugins: [
-
+    new VueLoaderPlugin(),
     new HTMLWebpackPlugin({
       template: './src/index.html'
     }),
