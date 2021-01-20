@@ -7,7 +7,7 @@ const path = require('path')
 
 module.exports = {
   mode: 'development',
-  entry: "./src/ts/app.js",
+  entry: "./src/ts/app.ts",
   output: {
     filename: "[name].[hash].js",
     path: path.resolve(__dirname, 'dist')
@@ -24,6 +24,17 @@ module.exports = {
         test: /\.js$/,
         exclude: '/mode_modules/',
         loader: 'babel-loader'
+      },
+      {
+        test: /\.ts$/,
+        exclude: '/mode_modules/',
+        loader: {
+          loader: 'babel-loader',
+          presets: [
+            '@babel/preset-env',
+            '@babel/preset-typescript'
+          ]
+        }
       },
       {
         test: /\.css$/,
