@@ -8,7 +8,7 @@ const path = require('path')
 
 module.exports = {
   mode: 'development',
-  entry: "./src/ts/app.js",
+  entry: "./src/ts/app.ts",
   output: {
     filename: "[name].[hash].js",
     path: path.resolve(__dirname, 'dist')
@@ -27,7 +27,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: '/mode_modules/',
+        exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
@@ -36,14 +36,13 @@ module.exports = {
                 '@babel/preset-env'
               ]
             },
-          }
+          },
         ] 
       },
       {
         test: /\.ts$/,
-        exclude: '/mode_modules/',
-        loader: 'ts-loader',
-        options: { appendTsSuffixTo: [/\.vue$/] },
+        exclude: /node_modules/,
+        use: ['ts-loader'],
       },
       {
         test: /\.css$/,
